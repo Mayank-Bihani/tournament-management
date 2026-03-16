@@ -1,0 +1,41 @@
+<%# app/views/matches/new.html.erb %>
+<div class="page-header">
+  <h1>Record Match</h1>
+  <%= link_to "← Back", matches_path, class: "btn btn-secondary" %>
+</div>
+
+<div class="card" style="max-width:480px">
+  <% if @match.errors.any? %>
+    <div class="error-messages">
+      <strong>Please fix the following:</strong>
+      <ul>
+        <% @match.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @match do |f| %>
+    <div class="form-group">
+      <%= f.label :winner_id, "Winner 🏆" %>
+      <%= f.select :winner_id,
+            options_from_collection_for_select(@players, :id, :name, @match.winner_id),
+            { prompt: "Select winner…" } %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :loser_id, "Loser" %>
+      <%= f.select :loser_id,
+            options_from_collection_for_select(@players, :id, :name, @match.loser_id),
+            { prompt: "Select loser…" } %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :played_on, "Date Played" %>
+      <%= f.date_field :played_on %>
+    </div>
+
+    <%= f.submit "Save Result", class: "btn btn-primary" %>
+  <% end %>
+</div>

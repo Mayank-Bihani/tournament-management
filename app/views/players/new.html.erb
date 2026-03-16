@@ -1,0 +1,26 @@
+<%# app/views/players/new.html.erb %>
+<div class="page-header">
+  <h1>Add Player</h1>
+  <%= link_to "← Back", players_path, class: "btn btn-secondary" %>
+</div>
+
+<div class="card" style="max-width:420px">
+  <% if @player.errors.any? %>
+    <div class="error-messages">
+      <strong>Please fix the following:</strong>
+      <ul>
+        <% @player.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @player do |f| %>
+    <div class="form-group">
+      <%= f.label :name, "Player Name" %>
+      <%= f.text_field :name, placeholder: "e.g. Alice", autofocus: true %>
+    </div>
+    <%= f.submit "Add to League", class: "btn btn-primary" %>
+  <% end %>
+</div>

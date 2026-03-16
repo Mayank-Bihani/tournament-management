@@ -1,0 +1,49 @@
+<%# app/views/matches/index.html.erb %>
+<div class="page-header">
+  <h1>Match Results</h1>
+  <%= link_to "＋ Record Match", new_match_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <% if @matches.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Winner 🏆</th>
+          <th></th>
+          <th>Loser</th>
+          <th style="width:80px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <tr>
+            <td class="text-muted" style="white-space:nowrap"><%= match.played_on.strftime("%d %b %Y") %></td>
+            <td>
+              <span style="font-weight:600;">
+                <%= link_to match.winner.name, player_path(match.winner), style:"color:inherit;text-decoration:none;" %>
+              </span>
+            </td>
+            <td class="text-muted" style="font-size:.8rem; text-align:center; padding:0 .5rem;">defeated</td>
+            <td>
+              <%= link_to match.loser.name, player_path(match.loser), style:"color:inherit;text-decoration:none;" %>
+            </td>
+            <td style="text-align:right">
+              <%= button_to "✕", match_path(match),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Delete this match result?" } },
+                    class: "btn btn-secondary",
+                    style: "font-size:.8rem; padding:.3rem .6rem;" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">
+      <p>No matches recorded yet.</p>
+      <p class="mt-1"><%= link_to "Record the first match →", new_match_path %></p>
+    </div>
+  <% end %>
+</div>

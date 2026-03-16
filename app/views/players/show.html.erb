@@ -1,0 +1,60 @@
+<%# app/views/players/show.html.erb %>
+<div class="page-header">
+  <h1><%= @player.name %></h1>
+  <%= link_to "← Back to Rankings", players_path, class: "btn btn-secondary" %>
+</div>
+
+<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+  <div class="card" style="text-align:center; margin-bottom:0; padding:1rem;">
+    <div style="font-size:2rem; font-weight:700; color:#2e7d32"><%= @player.wins %></div>
+    <div class="text-muted">Wins</div>
+  </div>
+  <div class="card" style="text-align:center; margin-bottom:0; padding:1rem;">
+    <div style="font-size:2rem; font-weight:700; color:#c62828"><%= @player.losses %></div>
+    <div class="text-muted">Losses</div>
+  </div>
+  <div class="card" style="text-align:center; margin-bottom:0; padding:1rem;">
+    <div style="font-size:2rem; font-weight:700;"><%= @player.total_matches %></div>
+    <div class="text-muted">Matches</div>
+  </div>
+  <div class="card" style="text-align:center; margin-bottom:0; padding:1rem;">
+    <div style="font-size:2rem; font-weight:700; color:#1565c0"><%= @player.win_rate %>%</div>
+    <div class="text-muted">Win Rate</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Recent Matches</h2>
+  <% if @recent_matches.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Result</th>
+          <th>Opponent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_matches.each do |match| %>
+          <% won = match.winner_id == @player.id %>
+          <% opponent = won ? match.loser : match.winner %>
+          <tr>
+            <td class="text-muted"><%= match.played_on.strftime("%d %b %Y") %></td>
+            <td>
+              <% if won %>
+                <span class="badge badge-green">WIN</span>
+              <% else %>
+                <span class="badge badge-red">LOSS</span>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to opponent.name, player_path(opponent), style: "text-decoration:none; font-weight:500;" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted empty-state">No matches recorded yet.</p>
+  <% end %>
+</div>

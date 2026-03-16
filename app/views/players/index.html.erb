@@ -1,0 +1,71 @@
+<%# app/views/players/index.html.erb %>
+<div class="page-header">
+  <h1>Player Rankings</h1>
+  <%= link_to "＋ Add Player", new_player_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <% if @players.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:50px">Rank</th>
+          <th>Player</th>
+          <th style="width:80px; text-align:center">Wins</th>
+          <th style="width:80px; text-align:center">Losses</th>
+          <th style="width:100px; text-align:center">Matches</th>
+          <th style="width:100px; text-align:center">Win Rate</th>
+          <th style="width:80px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @players.each_with_index do |player, idx| %>
+          <tr>
+            <td>
+              <span class="rank-num rank-<%= idx + 1 %>">
+                <%= idx == 0 ? "🥇" : idx == 1 ? "🥈" : idx == 2 ? "🥉" : idx + 1 %>
+              </span>
+            </td>
+            <td>
+              <%= link_to player.name, player_path(player), style: "font-weight:600; text-decoration:none; color:inherit;" %>
+            </td>
+            <td style="text-align:center">
+              <span class="badge badge-green"><%= player.wins_count %></span>
+            </td>
+            <td style="text-align:center">
+              <span class="badge badge-red"><%= player.losses_count %></span>
+            </td>
+            <td style="text-align:center">
+              <span class="badge badge-gray"><%= player.wins_count + player.losses_count %></span>
+            </td>
+            <td style="text-align:center">
+              <%
+                total   = player.wins_count + player.losses_count
+                rate    = total.zero? ? 0.0 : (player.wins_count.to_f / total * 100).round(1)
+              %>
+              <%= "#{rate}%" %>
+            </td>
+            <td style="text-align:right">
+              <%= button_to "Remove", player_path(player),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Remove #{player.name} from the league? All their match records will also be deleted." } },
+                    class: "btn btn-danger",
+                    style: "font-size:.8rem; padding:.3rem .7rem" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">
+      <p>No players yet.</p>
+      <p class="mt-1"><%= link_to "Add the first player →", new_player_path %></p>
+    </div>
+  <% end %>
+</div>
+
+<% if @players.any? %>
+  <div style="text-align:right">
+    <%= link_to "📋 Record a Match", new_match_path, class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -12,7 +12,17 @@ RSpec.describe Match, type: :model do
   describe "validations" do
     it { is_expected.to validate_presence_of(:winner_id) }
     it { is_expected.to validate_presence_of(:loser_id) }
-    it { is_expected.to validate_presence_of(:played_on) }
+
+    # played_on defaults to today via before_validation callback, so
+    # shoulda's one-liner can't test it by setting nil — test it explicitly instead
+    it "requires played_on to be present" do
+      match = build(:match, played_on: nil)
+      # clear the default so the callback doesn't repopulate it
+      allow(match).to receive(:set_played_on)
+      match.played_on = nil
+      match.valid?
+      expect(match.errors[:played_on]).to include("can't be blank")
+    end
 
     context "when winner and loser are the same player" do
       it "is invalid" do
@@ -25,7 +35,9 @@ RSpec.describe Match, type: :model do
 
     context "when winner and loser are different players" do
       it "is valid" do
-        match = build(:match)
+        winner = create(:player)
+        loser  = create(:player)
+        match  = build(:match, winner: winner, loser: loser)
         expect(match).to be_valid
       end
     end

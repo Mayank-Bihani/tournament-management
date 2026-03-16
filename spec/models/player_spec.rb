@@ -11,7 +11,15 @@ RSpec.describe Player, type: :model do
   # ── Validations ───────────────────────────────────────────────────────────
   describe "validations" do
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+
+    # shoulda-matchers needs an existing record with a valid name to test uniqueness
+    it "validates uniqueness of name case-insensitively" do
+      create(:player, name: "Alice")
+      duplicate = build(:player, name: "alice")
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:name]).to include("has already been taken")
+    end
+
     it { is_expected.to validate_length_of(:name).is_at_most(100) }
   end
 
@@ -85,10 +93,8 @@ RSpec.describe Player, type: :model do
       more_losses  = create(:player)
       third        = create(:player)
 
-      # Both have 2 wins
       create_list(:match, 2, winner: fewer_losses, loser: third)
       create_list(:match, 2, winner: more_losses,  loser: third)
-      # fewer_losses has 0 losses; more_losses has 1 loss
       create(:match, winner: third, loser: more_losses)
 
       ranked = Player.ranked

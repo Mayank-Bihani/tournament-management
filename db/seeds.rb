@@ -1,6 +1,3 @@
-# db/seeds.rb
-# Wipes existing data and seeds a small sample league for development / demo.
-
 puts "Clearing existing data..."
 Match.delete_all
 Player.delete_all

@@ -27,8 +27,6 @@ class Player < ApplicationRecord
     (wins.to_f / total_matches * 100).round(1)
   end
 
-  # Returns players ordered by wins desc, then losses asc (fewest losses as tiebreaker).
-  # Uses subqueries to avoid join alias ambiguity with two joins to the same table.
   def self.ranked
     wins_subquery = Match.select("winner_id, COUNT(*) AS wins_count")
                          .group("winner_id")
